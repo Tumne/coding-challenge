@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
-function App() {
+const App = ({ user }: { user: string }) => {
+  const [followers, setFollowers] = useState<any>([]);
+  const [selectedUser, setSelectedUser] = useState(false);
+
+  useEffect(() => {
+    const getFollowers = async () => {
+      try {
+        const res = await fetch(
+          `https://api.github.com/users/${user}/following`
+        );
+        if (res.status !== 200) throw new Error(res.statusText);
+        const response = await res.json();
+        setFollowers(response);
+      } catch (err) {
+        console.error(err);
+      } finally {
+      }
+    };
+
+    getFollowers();
+  }, [user]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ul className="App">
+      {followers.map((item: any) => {
+        return (
+          <li key={item.id}>
+            <p>
+              {item.login}{' '}
+              <button
+                onClick={() => {
+                  setSelectedUser(selectedUser === item.id ? null : item.id);
+                }}
+              >
+                load
+              </button>
+            </p>
+            {selectedUser === item.id && <App user={item.login} />}
+          </li>
+        );
+      })}
+    </ul>
   );
-}
+};
 
 export default App;
