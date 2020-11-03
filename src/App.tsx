@@ -16,7 +16,6 @@ const App = ({ user }: { user: string }) => {
         setFollowers(response);
       } catch (err) {
         console.error(err);
-      } finally {
       }
     };
 
